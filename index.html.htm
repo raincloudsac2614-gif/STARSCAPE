@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>STARSCAPE | Universe</title>
+
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.14.0/cdn/themes/dark.css" />
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@shoelace-style/shoelace@2.14.0/cdn/shoelace.js"></script>
+
+    <style>
+        :root {
+            --sl-color-primary-500: #3b82f6; 
+            background-color: #0b0f1a;
+            color: #ffffff;
+            font-family: var(--sl-font-sans);
+        }
+
+        body { margin: 0; padding: 0; min-height: 100vh; }
+
+        /* Navigation Bar */
+        nav {
+            background: #161b2b;
+            padding: 1rem 2.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #2d3748;
+        }
+
+        .brand {
+            font-size: 1.8rem;
+            font-weight: 800;
+            letter-spacing: 2px;
+            color: #fff;
+            text-decoration: none;
+            text-transform: uppercase;
+        }
+
+        .brand span { color: var(--sl-color-primary-500); }
+
+        .container { max-width: 1400px; margin: 0 auto; padding: 2rem; }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+            gap: 20px;
+        }
+
+        /* The Game Card Style */
+        .game-card {
+            background: #1e293b;
+            border-radius: 12px;
+            border: 1px solid #334155;
+            overflow: hidden;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .game-card:hover {
+            transform: translateY(-5px);
+            border-color: var(--sl-color-primary-500);
+            box-shadow: 0 0 15px rgba(59, 130, 246, 0.4);
+        }
+
+        .game-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            background: #000;
+        }
+
+        .game-info { padding: 12px; text-align: center; }
+        .game-info h3 { margin: 0; font-size: 1rem; }
+
+        /* Fullscreen Game Player */
+        sl-dialog::part(body) { padding: 0; background: #000; height: 80vh; }
+        iframe { width: 100%; height: 100%; border: none; }
+    </style>
+</head>
+<body class="sl-theme-dark">
+
+    <nav>
+        <a href="#" class="brand">STARSCAPE<span>.</span></a>
+        <sl-input id="search" placeholder="Search for a game..." pill clearable>
+            <sl-icon name="search" slot="prefix"></sl-icon>
+        </sl-input>
+    </nav>
+
+    <div class="container">
+        <div class="grid" id="game-grid">
+
+            <div class="game-card" data-url="games/eaglercraft/index.html" data-name="Eaglercraft">
+                <img src="https://wallpapers.com/images/hd/minecraft-grass-block-8-bit-8v6m5h4jsh4q3m4k.jpg" alt="Eaglercraft">
+                <div class="game-info"><h3>Eaglercraft</h3></div>
+            </div>
+
+            <div class="game-card" data-url="games/1v1lol/index.html" data-name="1v1.LOL">
+                <img src="https://play-lh.googleusercontent.com/9nF_36Vj_S5y2t_UvNRE7z2r0L1KzM6v3Z9x8U_GvK8pE9y9m7y_U5H-ZkK9S_E" alt="1v1.LOL">
+                <div class="game-info"><h3>1v1.LOL</h3></div>
+            </div>
+
+            <div class="game-card" data-url="PASTE_GAME_PATH_HERE" data-name="NEW_GAME_NAME">
+                <img src="https://via.placeholder.com/220x150/000/fff?text=ADD+THUMBNAIL" alt="Thumbnail">
+                <div class="game-info"><h3>New Game</h3></div>
+            </div>
+
+        </div>
+    </div>
+
+    <sl-dialog id="player" label="Playing..." style="--width: 90vw;">
+        <iframe id="game-frame" src=""></iframe>
+        <sl-button slot="footer" variant="primary" id="close">Close Game</sl-button>
+    </sl-dialog>
+
+    <script>
+        const cards = document.querySelectorAll('.game-card');
+        const player = document.getElementById('player');
+        const frame = document.getElementById('game-frame');
+        const closeBtn = document.getElementById('close');
+        const search = document.getElementById('search');
+
+        // TAB CLOAKER: Makes it look like Google Drive
+        function cloak() {
+            document.title = "My Drive - Google Drive";
+            const link = document.querySelector("link[rel*='icon']") || document.createElement('link');
+            link.type = 'image/x-icon'; link.rel = 'shortcut icon';
+            link.href = 'https://ssl.gstatic.com/docs/doclist/images/drive_2022q3_32dp.png';
+            document.getElementsByTagName('head')[0].appendChild(link);
+        }
+        cloak();
+
+        // Open Game Logic
+        cards.forEach(card => {
+            card.addEventListener('click', () => {
+                const url = card.getAttribute('data-url');
+                const name = card.getAttribute('data-name');
+                player.label = name;
+                frame.src = url;
+                player.show();
+            });
+        });
+
+        // Close Game Logic
+        closeBtn.addEventListener('click', () => {
+            player.hide();
+            frame.src = ""; 
+        });
+
+        // Search Filter
+        search.addEventListener('sl-input', () => {
+            const query = search.value.toLowerCase();
+            cards.forEach(card => {
+                const name = card.getAttribute('data-name').toLowerCase();
+                card.style.display = name.includes(query) ? 'block' : 'none';
+            });
+        });
+
+        // PANIC BUTTON: Press 'P' to escape to Google Classroom
+        document.addEventListener('keydown', (e) => {
+            if (e.key.toLowerCase() === 'p') {
+                window.location.href = "https://classroom.google.com";
+            }
+        });
+    </script>
+</body>
+</html>
